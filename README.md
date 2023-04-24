@@ -90,10 +90,10 @@
 ## 2.1  四个宏定义
 
 ```cpp
-#define _Doodle_Jump_Width_ 500 //游戏窗口宽度
-#define _Doodle_Jump_Height_ 800 //游戏窗口高度
-#define _land_num_ 10 //游戏中所包含的最大地块数量
-#define _Gravity_ 0.15 //重力加速度
+#define DOODLE_JUMP_WIDTH 500 //游戏窗口宽度
+#define DOODLE_JUMP_HEIGHT 800 //游戏窗口高度
+#define LAND_NUM 10 //游戏中所包含的最大地块数量
+#define GRAVITY 0.15 //重力加速度
 ```
 
 <a id="22-四种枚举类型"></a>
@@ -189,7 +189,7 @@ struct LandState {//单个地板的状况
     float vx;//移动地板移动速度
     LandType landType;//地板类型
     IMAGE *im_land;//地板图片，赋图片地址
-} land[_land_num_];//共生成_land_num_个地板
+} land[LAND_NUM];//共生成_land_num_个地板
 
 Land(string path);//构造函数初始化
 void retry_clean();//重新运行游戏时的初始化
@@ -360,7 +360,7 @@ void SaveData::game_save() {
 	savedata.write((char*)&land.land_vy, sizeof(float));
 	savedata.write((char*)&land.score, sizeof(int));
 	savedata.write((char*)&land.broken_y, sizeof(int));
-	for (int i = 0; i < _land_num_; i++)
+	for (int i = 0; i < LAND_NUM; i++)
 		savedata.write((char*)&land.land[i], sizeof(Land::LandState));
 	//Player部分
 	savedata.write((char*)&player.playerStatus, sizeof(PlayerStatus));
@@ -402,7 +402,7 @@ bool SaveData::game_load() {
 	savedata.read((char*)&land.land_vy, sizeof(float));
 	savedata.read((char*)&land.score, sizeof(int));
 	savedata.read((char*)&land.broken_y, sizeof(int));
-	for (int i = 0; i < _land_num_; i++) {
+	for (int i = 0; i < LAND_NUM; i++) {
 		savedata.read((char*)&land.land[i], sizeof(Land::LandState));
 		if (land.land[i].landType == landrocket) {
 			land.land[i].im_land = land.im_landrocket;
@@ -441,7 +441,7 @@ bool SaveData::game_load() {
 ## 3.6  地板的随机生成
 ```cpp
 void Land::Land_type(int i, int lnor, int lfr, int mv, int lspr, int lfly, int mvspr, int lroc) {
-	int rd = rand() % 100;
+	int rd = mt_rand() % 100;
 	if (rd < lnor) {
 		land[i].landType = normal;
 		land[i].im_land = im_normal;
@@ -464,10 +464,10 @@ void Land::Land_type(int i, int lnor, int lfr, int mv, int lspr, int lfly, int m
 		land[i].landType = landrocket;
 		land[i].im_land = im_landrocket;
 	}
-	land[i].middle_x = rand() % (_Doodle_Jump_Width_ - (int)land_width - _Doodle_Jump_Width_ / 2);
+	land[i].middle_x = mt_rand() % (DOODLE_JUMP_WIDTH - (int)land_width - DOODLE_JUMP_WIDTH / 2);
 }
 ```
-先使用`srand((unsigned)time(NULL));`按时间初始化随机数种子，再通过`rand()`函数生成随机数，按照不同概率生成地板类型。可以将概率写入函数参数表中，这样可以更加方便地按照游戏的进行更改不同的概率，提高游戏难度。
+使用`std::mt19937 mt_rand{std::random_device{}()};`初始化随机数种子，再通过`mt_rand()`函数生成随机数，按照不同概率生成地板类型。可以将概率写入函数参数表中，这样可以更加方便地按照游戏的进行更改不同的概率，提高游戏难度。
 
 <a id="37-小人与地板的碰撞判断"></a>
 
@@ -477,7 +477,7 @@ void Land::Land_type(int i, int lnor, int lfr, int mv, int lspr, int lfly, int m
 
 ```cpp
 void Player::isOnLand() {
-	for (int i = 0; i < _land_num_; i++) {
+	for (int i = 0; i < LAND_NUM; i++) {
 		if ((abs(y_bottom - land.land[i].top_y) <= vy) && (vy > 0)) {
 			if (land.land[i].landType == mvspring1 || land.land[i].landType == landspring1) {
 				if ((x_middle + 61 <= land.land[i].middle_x) || ((x_middle + 25) >= land.land[i].middle_x + land.land_width)) { // 大约估算图像中人物脚的距离,玩家没有落在地面上
