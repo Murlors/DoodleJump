@@ -3,8 +3,11 @@ cmake_minimum_required(VERSION 3.0)
 project(DoodleJump)
 
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O1")
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O0")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g")
+
+set(CMAKE_EXE_LINKER_FLAGS "-static -static-libstdc++")
 
 include_directories(include)
 link_directories(lib)
