@@ -89,7 +89,7 @@ void Welcome::change_name() {
             if (kmsg.flag == KEY_DOWN) {
                 if (isalnum(kmsg.key)) {
                     if (in.length() <= 10) {
-                        in += to_string(kmsg.key);
+                        in += (char) kmsg.key;
                         is_change = true;
                     }
                 } else if (kmsg.key == 8) {
