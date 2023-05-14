@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# CMake files
+cmake-build-*/
+
+# Idea files
+.idea
+
+# Game Data
+rank.txt
+savedata.dat
